@@ -59,6 +59,10 @@ class Prediction:
     def mode_duration(self):
         return self._duration_frequency.most_common()[0][0]
 
+    @property
+    def duration_frequency_counts(self):
+        return self._duration_frequency.items()
+
     def probability_of_completion(self, target_duration: int) -> float:
         # Get the frequency of each prediction where
         # the work was completed within the target duration
