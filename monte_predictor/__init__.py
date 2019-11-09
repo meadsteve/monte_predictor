@@ -1,14 +1,27 @@
 import collections
 import random
-from typing import List
+from dataclasses import dataclass
+from typing import List, Tuple
 
 
-def generate_a_future(work_to_do: int, sample_velocities: List[int]) -> List[int]:
+@dataclass
+class TeamModel:
+    # Set of previous velocities for the team
+    sample_velocities: List[int]
+
+    # The upper and lower bound for how many stories get
+    # resolved for each starting story. This would include
+    # bug fix work if the velocity included bug fixes.
+    work_split_range: Tuple[int, int] = (1, 1)
+
+
+def generate_a_future(work_to_do: int, model: TeamModel) -> List[int]:
     future = []
-    while work_to_do > 0:
-        velocity = random.choice(sample_velocities)
+    actual_work_to_do = work_to_do * random.uniform(model.work_split_range[0], model.work_split_range[1])
+    while actual_work_to_do > 0:
+        velocity = random.choice(model.sample_velocities)
         future.append(velocity)
-        work_to_do = work_to_do - velocity
+        actual_work_to_do = actual_work_to_do - velocity
     return future
 
 
@@ -40,10 +53,10 @@ class Prediction:
         return sum(successes) / len(self.generated_futures)
 
 
-def make_a_prediction(work_to_do: int, sample_velocities: List[int]) -> Prediction:
+def make_a_prediction(work_to_do: int, model: TeamModel) -> Prediction:
     # Run a 10,000 simulations. This should be relatively quick
     generated_futures = [
-        generate_a_future(work_to_do, sample_velocities)
+        generate_a_future(work_to_do, model)
         for _ in range(1, 10000)
     ]
 
