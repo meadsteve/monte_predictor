@@ -15,27 +15,42 @@ class TeamModel:
     work_split_range: Tuple[int, int] = (1, 1)
 
 
-def generate_a_future(work_to_do: int, model: TeamModel) -> List[int]:
-    future = []
+@dataclass
+class PossibleFuture:
+    velocities: List[int]
+    work_history: List[int]
+
+    @property
+    def duration(self) -> int:
+        return len(self.velocities)
+
+
+def generate_a_future(work_to_do: int, model: TeamModel) -> PossibleFuture:
     actual_work_to_do = work_to_do * random.uniform(model.work_split_range[0], model.work_split_range[1])
+    velocities = []
+    work_history = [actual_work_to_do]
     while actual_work_to_do > 0:
         velocity = random.choice(model.sample_velocities)
-        future.append(velocity)
+        velocities.append(velocity)
         actual_work_to_do = actual_work_to_do - velocity
-    return future
+        work_history.append(actual_work_to_do)
+    return PossibleFuture(
+        velocities=velocities,
+        work_history=work_history
+    )
 
 
 class Prediction:
-    generated_futures: List[List[int]]
+    generated_futures: List[PossibleFuture]
 
     _durations: List[int]
     _duration_frequency: collections.Counter
 
-    def __init__(self, generated_futures):
+    def __init__(self, generated_futures: List[PossibleFuture]):
         self.generated_futures = generated_futures
 
         # Find out how many "sprints" each simulation took
-        self._durations = [len(future) for future in generated_futures]
+        self._durations = [future.duration for future in generated_futures]
 
         # Now count how common each sprint number was
         self._duration_frequency = collections.Counter(self._durations)
