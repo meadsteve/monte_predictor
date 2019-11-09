@@ -12,7 +12,7 @@ class TeamModel:
     # The upper and lower bound for how many stories get
     # resolved for each starting story. This would include
     # bug fix work if the velocity included bug fixes.
-    work_split_range: Tuple[int, int] = (1, 1)
+    work_split_range: Tuple[float, float] = (1, 1)
 
 
 @dataclass
