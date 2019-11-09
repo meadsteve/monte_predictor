@@ -1,4 +1,5 @@
 from monte_predictor import make_a_prediction, TeamModel
+from monte_predictor.visuals import graph_example
 
 print("Predicting...\n\n")
 
@@ -32,3 +33,5 @@ prediction = make_a_prediction(
 for sprints in [5, 6, 7, 8, 9, 10]:
     complete_within = prediction.probability_of_completion(sprints)
     print(f"The chance of completion within {sprints} sprints is {round(complete_within * 100)}%")
+
+graph_example(prediction)
