@@ -55,6 +55,10 @@ class Prediction:
         # Now count how common each sprint number was
         self._duration_frequency = collections.Counter(self._durations)
 
+    @property
+    def mode_duration(self):
+        return self._duration_frequency.most_common()[0][0]
+
     def probability_of_completion(self, target_duration: int) -> float:
         # Get the frequency of each prediction where
         # the work was completed within the target duration
