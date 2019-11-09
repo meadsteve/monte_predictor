@@ -11,7 +11,7 @@ previous_velocities = [2, 4, 5, 2, 3, 5, 3]
 model = TeamModel(
     # Use the previous data we have for how quickly the team works
     sample_velocities=previous_velocities,
-    # Now assume the team creating about as many stories again whilst working
+    # Now assume the team creates up to about as many stories again whilst working
     work_split_range=(1, 2)
 )
 
@@ -23,7 +23,8 @@ model = TeamModel(
 # data (7 time periods)
 prediction = make_a_prediction(
     work_to_do=16,
-    model=model
+    model=model,
+    simulation_count=10_000  # Running 10k predictions should be quick but accurate
 )
 
 # Print out the probability of completing the work in

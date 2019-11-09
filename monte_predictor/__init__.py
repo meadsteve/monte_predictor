@@ -53,11 +53,15 @@ class Prediction:
         return sum(successes) / len(self.generated_futures)
 
 
-def make_a_prediction(work_to_do: int, model: TeamModel) -> Prediction:
-    # Run a 10,000 simulations. This should be relatively quick
+def make_a_prediction(
+        work_to_do: int,
+        model: TeamModel,
+        simulation_count: int = 100_000
+) -> Prediction:
+    # Run the number of simulations specified by the
+    # model and return this as a prediction
     generated_futures = [
         generate_a_future(work_to_do, model)
-        for _ in range(1, 10000)
+        for _ in range(1, simulation_count)
     ]
-
     return Prediction(generated_futures)
