@@ -56,7 +56,7 @@ class Prediction:
         self._duration_frequency = collections.Counter(self._durations)
 
     @property
-    def mode_duration(self):
+    def mode_duration(self) -> int:
         return self._duration_frequency.most_common()[0][0]
 
     @property

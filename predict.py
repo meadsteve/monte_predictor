@@ -20,8 +20,8 @@ model = TeamModel(
     work_split_range=(1, 1.5)
 )
 
-# Lets make a prediction on how long it would take us to do the
-# 19 points. Given we've modeled the team often split
+# Lets make a prediction on how long it would take us to do a piece of work
+# the team estimated at 19 points. Given we've modeled the team often split
 # out extra stories between 1 and 1.5 times the initial estimate
 # we'd expect the team to complete about 24 points
 # therefor the model should give predictions close to the initial
