@@ -16,7 +16,7 @@ class TeamModel:
 
 
 @dataclass
-class PossibleFuture:
+class _PossibleFuture:
     velocities: List[int]
     work_history: List[int]
 
@@ -25,7 +25,7 @@ class PossibleFuture:
         return len(self.velocities)
 
 
-def generate_a_future(work_to_do: int, model: TeamModel) -> PossibleFuture:
+def _generate_a_future(work_to_do: int, model: TeamModel) -> _PossibleFuture:
     actual_work_to_do = work_to_do * random.uniform(model.work_split_range[0], model.work_split_range[1])
     velocities = []
     work_history = [actual_work_to_do]
@@ -34,19 +34,19 @@ def generate_a_future(work_to_do: int, model: TeamModel) -> PossibleFuture:
         velocities.append(velocity)
         actual_work_to_do = actual_work_to_do - velocity
         work_history.append(actual_work_to_do)
-    return PossibleFuture(
+    return _PossibleFuture(
         velocities=velocities,
         work_history=work_history
     )
 
 
 class Prediction:
-    generated_futures: List[PossibleFuture]
+    generated_futures: List[_PossibleFuture]
 
     _durations: List[int]
     _duration_frequency: collections.Counter
 
-    def __init__(self, generated_futures: List[PossibleFuture]):
+    def __init__(self, generated_futures: List[_PossibleFuture]):
         self.generated_futures = generated_futures
 
         # Find out how many "sprints" each simulation took
@@ -84,7 +84,7 @@ def make_a_prediction(
     # Run the number of simulations specified by the
     # model and return this as a prediction
     generated_futures = [
-        generate_a_future(work_to_do, model)
+        _generate_a_future(work_to_do, model)
         for _ in range(1, simulation_count)
     ]
     return Prediction(generated_futures)
