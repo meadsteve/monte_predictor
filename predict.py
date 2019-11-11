@@ -34,7 +34,7 @@ prediction = make_a_prediction(
 
 # Print out the probability of completing the work in
 # a few given time periods
-for sprints in range(prediction.mode_duration - 4, prediction.mode_duration + 3):
+for sprints in range(max(prediction.mode_duration - 5, 0), prediction.mode_duration + 4):
     complete_within = prediction.probability_of_completion(sprints)
     print(f"The chance of completion within {sprints} sprints is {round(complete_within * 100)}%")
 
