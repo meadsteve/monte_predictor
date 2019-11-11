@@ -3,40 +3,45 @@ from monte_predictor.visuals import graph_example_histories, graph_frequencies
 
 print("Predicting...\n\n")
 
-# The velocities for the previous N time periods (could be days, sprints, weeks etc.)
-# The velocities could be in story points, number of stories or another unit as
-# long as the unit is the same.
-# In this case the total work was 24 over 7 time periods
-previous_velocities = [2, 4, 5, 2, 3, 5, 3]
-
-# An example of a less consistent team
-# previous_velocities = [1, 3, 8, 1, 2, 6, 3]
+# Randomly pulled in per week data. Loaded from jira then monkeyed around in
+# google sheets. Includes all story kinds including bug fix work.
+previous_velocities = [
+    8,
+    13,
+    11,
+    6,
+    15,
+    4,
+    4,
+    5,
+    2,
+    10,
+    15,
+    9,
+    15
+]
 
 
 model = TeamModel(
     # Use the previous data we have for how quickly the team works
     sample_velocities=previous_velocities,
-    # Now assume the team creates up to about half as many stories again whilst working
-    work_split_range=(1, 1.5)
+    # Assuming a large amount of work splitting as the velocities include bug fixing
+    work_split_range=(1, 5)
 )
 
-# Lets make a prediction on how long it would take us to do a piece of work
-# the team estimated at 19 points. Given we've modeled the team often split
-# out extra stories between 1 and 1.5 times the initial estimate
-# we'd expect the team to complete about 24 points
-# therefor the model should give predictions close to the initial
-# data (7 time periods)
+# Lets make a prediction on how long it would take us to do a piece of work currently
+# broken down into 10 stories
 prediction = make_a_prediction(
-    work_to_do=19,
+    work_to_do=10,
     model=model,
     simulation_count=10_000  # Running 10k predictions should be quick but accurate
 )
 
 # Print out the probability of completing the work in
 # a few given time periods
-for sprints in range(prediction.mode_duration - 4, prediction.mode_duration + 3):
-    complete_within = prediction.probability_of_completion(sprints)
-    print(f"The chance of completion within {sprints} sprints is {round(complete_within * 100)}%")
+for weeks in range(max(prediction.mode_duration - 5, 0), prediction.mode_duration + 4):
+    complete_within = prediction.probability_of_completion(weeks)
+    print(f"The chance of completion within {weeks} weeks is {round(complete_within * 100)}%")
 
 graph_frequencies(prediction)
 graph_example_histories(prediction)
