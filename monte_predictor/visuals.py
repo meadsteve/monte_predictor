@@ -1,6 +1,5 @@
 import random
 
-import numpy
 from matplotlib import pyplot as plt
 
 from monte_predictor import Prediction

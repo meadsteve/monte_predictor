@@ -4,6 +4,7 @@ import random
 from dataclasses import dataclass
 from typing import List
 
+from matplotlib import pyplot as plt
 
 @dataclass
 class Future:
@@ -85,10 +86,48 @@ def make_a_prediction(
     return Prediction(generated_futures=generated_futures)
 
 
-prediction = make_a_prediction(starting_cash=100, gambles_to_run=12)
+def graph_example_histories(prediction_to_plot: Prediction):
+    # Grab a bunch of the predictions and plot them
+    sample_to_graph = random.sample(prediction_to_plot.generated_futures, 10)
+    plt.xkcd()
+    for data in sample_to_graph:
+        plt.plot(data.history)
+
+    # No point in showing backwards in time or less than no money
+    plt.ylim(bottom=0)
+    plt.xlim(left=0)
+
+    # Label stuff
+    plt.title("Am I rich?")
+    plt.xlabel("Number of spins")
+    plt.ylabel("Euros")
+
+    plt.show()
+
+
+def graph_frequencies(prediction_to_plot: Prediction):
+    x, y = zip(*prediction_to_plot.frequency_of_final_balances)
+    plt.xkcd()
+
+    plt.bar(x, y, color='g')
+    plt.tight_layout()
+
+    plt.title("How rich am I at the end?")
+    plt.xlabel("Euros I have")
+
+    plt.ylim(bottom=0, top=8000)
+    plt.xlim(left=0, right=150)
+
+    plt.show()
+
+
+prediction = make_a_prediction(starting_cash=100, gambles_to_run=30)
 
 print(f"The probability of having at least a single euro: {math.floor(100 * prediction.probability_of_having_money(1))}%")
 print(f"The probability of having made at least a dollar: {math.floor(100 * prediction.probability_of_having_money(101))}%")
 print(f"The probability of having at least doubled your money: {math.floor(100 * prediction.probability_of_having_money(200))}%")
+
+graph_example_histories(prediction)
+graph_frequencies(prediction)
 
 
