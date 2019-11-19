@@ -38,8 +38,25 @@ def generate_a_future(cash: int, gambles_to_run: int) -> Future:
     return Future(history=money_history, final_balance=cash)
 
 
-print(generate_a_future(100, 10))
-print(generate_a_future(100, 10))
-print(generate_a_future(100, 10))
-print(generate_a_future(100, 10))
-print(generate_a_future(100, 10))
+@dataclass
+class Prediction:
+    generated_futures: List[Future]
+
+
+def make_a_prediction(
+    starting_cash: int,
+    gambles_to_run: int,
+    simulation_count: int = 100_000
+) -> Prediction:
+    # Run the number of simulations specified by the
+    # model and return this as a prediction
+    generated_futures = [
+        generate_a_future(starting_cash, gambles_to_run)
+        for _ in range(1, simulation_count)
+    ]
+    return Prediction(generated_futures=generated_futures)
+
+
+print(make_a_prediction(starting_cash=100, gambles_to_run=10, simulation_count=20))
+
+
