@@ -1,3 +1,4 @@
+import collections
 import math
 import random
 from dataclasses import dataclass
@@ -42,6 +43,33 @@ def generate_a_future(cash: int, gambles_to_run: int) -> Future:
 class Prediction:
     generated_futures: List[Future]
 
+    _final_balances: collections.Counter
+
+    def __init__(self, generated_futures: List[Future]):
+        self.generated_futures = generated_futures
+
+        # Find out how many "sprints" each simulation took
+        final_balances = [future.final_balance for future in generated_futures]
+
+        # Now count how common each sprint number was
+        self._final_balances = collections.Counter(final_balances)
+
+    @property
+    def mode_final_balance(self) -> int:
+        return self._final_balances.most_common()[0][0]
+
+    @property
+    def frequency_of_final_balances(self):
+        return self._final_balances.items()
+
+    def probability_of_having_money(self, target_money: int) -> float:
+        successes = [
+            freq for (balance, freq) in self.frequency_of_final_balances
+            if balance >= target_money
+        ]
+
+        return sum(successes) / len(self.generated_futures)
+
 
 def make_a_prediction(
     starting_cash: int,
@@ -57,6 +85,10 @@ def make_a_prediction(
     return Prediction(generated_futures=generated_futures)
 
 
-print(make_a_prediction(starting_cash=100, gambles_to_run=10, simulation_count=20))
+prediction = make_a_prediction(starting_cash=100, gambles_to_run=12)
+
+print(f"The probability of having at least a single euro: {math.floor(100 * prediction.probability_of_having_money(1))}%")
+print(f"The probability of having made at least a dollar: {math.floor(100 * prediction.probability_of_having_money(101))}%")
+print(f"The probability of having at least doubled your money: {math.floor(100 * prediction.probability_of_having_money(200))}%")
 
 
